@@ -204,6 +204,13 @@ namespace GameOfLifeTests
             return Prop.When(true,
                 () => Cell.Alive().NextGeneration(neighbors).IsAlive());
         }
+
+        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
+        public Property IsFertilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => Cell.Dead().NextGeneration(neighbors).IsAlive());
+        }
     }
 
     public static class OnlyThreeAliveNeighborsGenerator
