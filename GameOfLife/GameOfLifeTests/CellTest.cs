@@ -11,13 +11,27 @@ namespace GameOfLifeTests
             Check.That(deadCell.IsAlive()).IsFalse();
         }
 
+        [Fact]
+        public void Alive_Cell()
+        {
+            Cell aliveCell = new Cell(true);
+            NFluent.Check.That(aliveCell.IsAlive()).IsTrue();
+        }
+
     }
 
     internal class Cell
     {
+        private bool isAlive;
+
+        public Cell(bool isAlive= false)
+        {
+            this.isAlive = isAlive;
+        }
+
         internal bool IsAlive()
         {
-            return false;
+            return isAlive;
         }
     }
 }
