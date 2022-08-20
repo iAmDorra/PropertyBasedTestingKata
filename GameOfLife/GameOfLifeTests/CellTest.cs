@@ -183,7 +183,34 @@ namespace GameOfLifeTests
                 .NextGeneration(neighbors)
                 .IsAlive());
         }
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withAliveCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
+        }
     }
+
+    public static class OnlyTwoAliveNeighborsGenerator
+    {
+        public static Arbitrary<List<Cell>> Generate()
+        {
+            Arbitrary<List<Cell>> deadCells = Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+            var deadCellsWithTwoAliveOnes = deadCells.MapFilter(c1 =>
+            {
+                var cellsWith2Alive = new List<Cell>
+                  {
+                    Cell.Alive(),
+                    Cell.Alive()
+                  };
+                cellsWith2Alive.AddRange(c1);
+                return cellsWith2Alive;
+            }, c => true);
+            return deadCellsWithTwoAliveOnes;
+        }
+    }
+
     public static class DeadCellGenerator
     {
         public static Arbitrary<List<Cell>> Generate()
