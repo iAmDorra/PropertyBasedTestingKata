@@ -18,6 +18,14 @@ namespace GameOfLifeTests
             NFluent.Check.That(aliveCell.IsAlive()).IsTrue();
         }
 
+        [Fact]
+        public void Dead_cell_with_no_neighbor_still_dead()
+        {
+            Cell deadCell = Cell.Dead();
+            var neighbors = new List<Cell>();
+            var cell = deadCell.NextGeneration(neighbors);
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
+        }
     }
 
     internal class Cell
@@ -42,6 +50,19 @@ namespace GameOfLifeTests
         internal bool IsAlive()
         {
             return isAlive;
+        }
+
+        internal Cell NextGeneration(List<Cell> neightbors)
+        {
+            return Cell.Dead();
+        }
+        public override bool Equals(object? obj)
+        {
+            var cell = obj as Cell;
+            if (cell == null)
+                return base.Equals(obj);
+            else
+                return cell.isAlive == this.isAlive;
         }
     }
 }
