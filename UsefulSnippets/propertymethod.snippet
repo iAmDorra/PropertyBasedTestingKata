@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>Property Method</Title>
+      <Shortcut>propm</Shortcut>
+      <Description>Code snippet for a property based testing method</Description>
+      <Author>Dorra Bartaguiz</Author>
+    </Header>
+    <Snippet>
+      <Imports>
+        <Import>
+          <Namespace>FsCheck</Namespace>
+        </Import>
+        <Import>
+          <Namespace>FsCheck.Xunit</Namespace>
+        </Import>
+      </Imports>
+      <Declarations>
+        <Literal>
+          <ID>name</ID>
+          <ToolTip>Replace with the name of the property based testing method</ToolTip>
+          <Default>PropertyMethod</Default>
+        </Literal>
+        <Literal>
+          <ID>generator</ID>
+          <ToolTip>Replace with the name of the inut generator</ToolTip>
+          <Default>InputGenerator</Default>
+        </Literal>
+        <Literal>
+          <ID>inputType</ID>
+          <ToolTip>Replace with the type of inputs</ToolTip>
+          <Default>object</Default>
+        </Literal>
+        <Literal>
+          <ID>input</ID>
+          <ToolTip>Replace with the name of input</ToolTip>
+          <Default>input</Default>
+        </Literal>
+        <Literal>
+          <ID>assumeCondition</ID>
+          <ToolTip>Replace with the condition of assume</ToolTip>
+          <Default>true</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[[Property(Arbitrary = new[] { typeof($generator$) })]
+        public Property $name$($inputType$ $input$)
+        {
+            return Prop.When($assumeCondition$,
+                () => $end$);
+        }]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
