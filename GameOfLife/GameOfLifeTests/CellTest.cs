@@ -119,6 +119,18 @@ namespace GameOfLifeTests
             var cell = deadCell.NextGeneration(neighbors);
             Check.That(cell).IsEqualTo(Cell.Dead());
         }
+
+        [Fact]
+        public void Alive_cell_with_1_neighbor_dies()
+        {
+            Cell deadCell = Cell.Alive();
+            var neighbors = new List<Cell>
+            {
+                Cell.Alive(),
+            };
+            var cell = deadCell.NextGeneration(neighbors);
+            Check.That(cell).IsEqualTo(Cell.Dead());
+        }
     }
 
     internal class Cell
