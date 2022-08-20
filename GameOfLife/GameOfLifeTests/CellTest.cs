@@ -200,16 +200,26 @@ namespace GameOfLifeTests
 
         internal Cell NextGeneration(List<Cell> neighbors)
         {
-            if (neighbors.Count(neighbor => neighbor.isAlive) == 2)
+            if (WithinStabilityThreshold(neighbors))
             {
                 return this;
             }
 
-            if (neighbors.Count(neighbor => neighbor.isAlive) == 3)
+            if (IsFertilityThreshold(neighbors))
             {
                 return Cell.Alive();
             }
             return Cell.Dead();
+        }
+
+        private static bool IsFertilityThreshold(List<Cell> neighbors)
+        {
+            return neighbors.Count(neighbor => neighbor.isAlive) == 3;
+        }
+
+        private static bool WithinStabilityThreshold(List<Cell> neighbors)
+        {
+            return neighbors.Count(neighbor => neighbor.isAlive) == 2;
         }
 
         public override bool Equals(object? obj)
