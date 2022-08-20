@@ -211,6 +211,32 @@ namespace GameOfLifeTests
             return Prop.When(true,
                 () => Cell.Dead().NextGeneration(neighbors).IsAlive());
         }
+
+        [Property(Arbitrary = new[] { typeof(OverpopulationGenerator) })]
+        public Property Overpopulation(IEnumerable<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => !Cell.Alive()
+                .NextGeneration(neighbors)
+                .IsAlive());
+        }
+    }
+
+    public static class OverpopulationGenerator
+    {
+        public static Arbitrary<IEnumerable<Cell>> Generate()
+        {
+            var arbInt = Arb.Default.Int32()
+                .Convert(
+                x => Math.Abs(x) + 4,
+                y => y - 4);
+
+            var arbCell = arbInt.Convert(
+                x => Enumerable.Range(0, x).Select(x => Cell.Alive()),
+                c => c.Count());
+
+            return arbCell;
+        }
     }
 
     public static class OnlyThreeAliveNeighborsGenerator

@@ -26,7 +26,7 @@ namespace GameOfLifeTests
             return isAlive;
         }
 
-        internal Cell NextGeneration(List<Cell> neighbors)
+        internal Cell NextGeneration(IEnumerable<Cell> neighbors)
         {
             if (WithinStabilityThreshold(neighbors))
             {
@@ -40,12 +40,12 @@ namespace GameOfLifeTests
             return Cell.Dead();
         }
 
-        private static bool IsFertilityThreshold(List<Cell> neighbors)
+        private static bool IsFertilityThreshold(IEnumerable<Cell> neighbors)
         {
             return neighbors.Count(neighbor => neighbor.isAlive) == 3;
         }
 
-        private static bool WithinStabilityThreshold(List<Cell> neighbors)
+        private static bool WithinStabilityThreshold(IEnumerable<Cell> neighbors)
         {
             return neighbors.Count(neighbor => neighbor.isAlive) == 2;
         }
