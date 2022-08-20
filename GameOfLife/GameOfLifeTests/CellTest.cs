@@ -106,6 +106,19 @@ namespace GameOfLifeTests
             var cell = deadCell.NextGeneration(neighbors);
             Check.That(cell).IsEqualTo(Cell.Alive());
         }
+
+        [Fact]
+        public void Dead_cell_with_2_neighbors_still_dead()
+        {
+            Cell deadCell = Cell.Dead();
+            var neighbors = new List<Cell>
+            {
+                Cell.Alive(),
+                Cell.Alive(),
+            };
+            var cell = deadCell.NextGeneration(neighbors);
+            Check.That(cell).IsEqualTo(Cell.Dead());
+        }
     }
 
     internal class Cell
@@ -137,7 +150,7 @@ namespace GameOfLifeTests
             if (neighbors.Count == 2
                 && neighbors.All(neighbor => neighbor.isAlive))
             {
-                return Cell.Alive();
+                return this;
             }
 
             if (neighbors.Count == 3
