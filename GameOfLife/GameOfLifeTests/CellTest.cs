@@ -1,3 +1,5 @@
+using FsCheck;
+using FsCheck.Xunit;
 using NFluent;
 
 namespace GameOfLifeTests
@@ -8,7 +10,7 @@ namespace GameOfLifeTests
         public void Dead_Cell()
         {
             Cell deadCell = Cell.Dead();
-            Check.That(deadCell.IsAlive()).IsFalse();
+            NFluent.Check.That(deadCell.IsAlive()).IsFalse();
         }
 
         [Fact]
@@ -47,7 +49,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -61,7 +63,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -76,7 +78,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -91,7 +93,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -104,7 +106,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -117,7 +119,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -129,7 +131,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -141,7 +143,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -156,7 +158,7 @@ namespace GameOfLifeTests
                 Cell.Dead(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -170,15 +172,32 @@ namespace GameOfLifeTests
                 Cell.Dead(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+            NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(DeadCellGenerator) })]
+        public Property DeadCells(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => !Cell.Dead()
+                .NextGeneration(neighbors)
+                .IsAlive());
+        }
+
+        public static class DeadCellGenerator
+        {
+            public static Arbitrary<List<Cell>> Generate()
+            {
+                return Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+            }
         }
     }
 
-    internal class Cell
+    public class Cell
     {
         private bool isAlive;
 
-        private Cell(bool isAlive= false)
+        public Cell(bool isAlive = false)
         {
             this.isAlive = isAlive;
         }
