@@ -190,6 +190,13 @@ namespace GameOfLifeTests
             return Prop.When(true,
                 () => Cell.Alive().NextGeneration(neighbors).IsAlive());
         }
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => !Cell.Dead().NextGeneration(neighbors).IsAlive());
+        }
     }
 
     public static class OnlyTwoAliveNeighborsGenerator
