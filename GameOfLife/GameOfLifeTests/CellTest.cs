@@ -26,6 +26,29 @@ namespace GameOfLifeTests
             var cell = deadCell.NextGeneration(neighbors);
             NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
+
+        [Fact]
+        public void Alive_cell_with_no_neighbor_dies()
+        {
+            Cell aliveCell = Cell.Alive();
+            var neighbors = new List<Cell>();
+            var cell = aliveCell.NextGeneration(neighbors);
+            NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
+        }
+
+        [Fact]
+        public void Dead_cell_with_3_neighbor_survives()
+        {
+            Cell deadCell = Cell.Dead();
+            var neighbors = new List<Cell>
+            {
+                Cell.Alive(),
+                Cell.Alive(),
+                Cell.Alive(),
+            };
+            var cell = deadCell.NextGeneration(neighbors);
+            Check.That(cell).IsEqualTo(Cell.Alive());
+        }
     }
 
     internal class Cell
@@ -52,8 +75,13 @@ namespace GameOfLifeTests
             return isAlive;
         }
 
-        internal Cell NextGeneration(List<Cell> neightbors)
+        internal Cell NextGeneration(List<Cell> neighbors)
         {
+            if (neighbors.Count == 3
+                && neighbors.All(neighbor => neighbor.isAlive))
+            {
+                return Cell.Alive();
+            }
             return Cell.Dead();
         }
         public override bool Equals(object? obj)
