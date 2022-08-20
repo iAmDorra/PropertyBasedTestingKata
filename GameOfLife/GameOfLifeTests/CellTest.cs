@@ -2,7 +2,7 @@ using NFluent;
 
 namespace GameOfLifeTests
 {
-    public class UnitTest1
+    public class CellTest
     {
         [Fact]
         public void Dead_Cell()
