@@ -182,7 +182,137 @@ namespace GameOfLifeTests
             };
             var cell = deadCell.NextGeneration(neighbors);
             Check.That(cell).IsEqualTo(Cell.Dead());
+        [Property(Arbitrary = new[] { typeof(DeadCellGenerator) })]
+        {
+            return Prop.When(true,
+                () => !Cell.Dead()
+                .NextGeneration(neighbors)
+                .IsAlive());
         }
-        #endregion
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withAliveCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => !Cell.Dead().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
+        public Property IsFertilityThreshold_withAliveCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
+        public Property IsFertilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => Cell.Dead().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OverpopulationGenerator) })]
+        public Property Overpopulation(IEnumerable<Cell> neighbors)
+        {
+            return Prop.When(true,
+                () => !Cell.Alive()
+                .NextGeneration(neighbors)
+                .IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OverpopulationGenerator2) })]
+        public Property Overpopulation2(IEnumerable<Cell> neighbors)
+        {
+            return Prop.When(neighbors.Count() > 3,
+                () => !Cell.Alive()
+                .NextGeneration(neighbors)
+                .IsAlive());
+        }
+    }
+
+    public static class OverpopulationGenerator2
+    {
+        public static Arbitrary<IEnumerable<Cell>> Generate()
+        {
+            var arbInt = Arb.Default.Int32()
+                .Convert(
+                x => Math.Abs(x),
+                y => y);
+
+            var arbCell = arbInt.Convert(
+                x => Enumerable.Range(0, x).Select(x => Cell.Alive()),
+                c => c.Count());
+
+            return arbCell;
+        }
+    }
+    public static class OverpopulationGenerator
+    {
+        public static Arbitrary<IEnumerable<Cell>> Generate()
+        {
+            var arbInt = Arb.Default.Int32()
+                .Convert(
+                x => Math.Abs(x) + 4,
+                y => y - 4);
+
+            var arbCell = arbInt.Convert(
+                x => Enumerable.Range(0, x).Select(x => Cell.Alive()),
+                c => c.Count());
+
+            return arbCell;
+        }
+    }
+    public static class OnlyThreeAliveNeighborsGenerator
+    {
+        public static Arbitrary<List<Cell>> Generate()
+        {
+            Arbitrary<List<Cell>> deadCells = Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+            var deadCellsWithTwoAliveOnes = deadCells.MapFilter(c1 =>
+            {
+                var cellsWith2Alive = new List<Cell>
+                  {
+                    Cell.Alive(),
+                    Cell.Alive(),
+                    Cell.Alive()
+                  };
+                cellsWith2Alive.AddRange(c1);
+                return cellsWith2Alive;
+            }, c => true);
+            return deadCellsWithTwoAliveOnes;
+        }
+    }
+
+    public static class OnlyTwoAliveNeighborsGenerator
+    {
+        public static Arbitrary<List<Cell>> Generate()
+        {
+            Arbitrary<List<Cell>> deadCells = Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+            var deadCellsWithTwoAliveOnes = deadCells.MapFilter(c1 =>
+            {
+                var cellsWith2Alive = new List<Cell>
+                  {
+                    Cell.Alive(),
+                    Cell.Alive()
+                  };
+                cellsWith2Alive.AddRange(c1);
+                return cellsWith2Alive;
+            }, c => true);
+            return deadCellsWithTwoAliveOnes;
+        }
+    }
+
+    public static class DeadCellGenerator
+    {
+        public static Arbitrary<List<Cell>> Generate()
+        {
+            return Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+        }
     }
 }
