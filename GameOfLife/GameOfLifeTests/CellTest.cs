@@ -1,3 +1,5 @@
+using FsCheck;
+using FsCheck.Xunit;
 using NFluent;
 
 namespace GameOfLifeTests
@@ -8,7 +10,7 @@ namespace GameOfLifeTests
         public void Dead_Cell()
         {
             Cell deadCell = Cell.Dead();
-            Check.That(deadCell.IsAlive()).IsFalse();
+           NFluent.Check.That(deadCell.IsAlive()).IsFalse();
         }
 
         [Fact]
@@ -38,7 +40,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
         #endregion
 
@@ -55,7 +57,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
         #endregion
 
@@ -70,7 +72,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -84,7 +86,7 @@ namespace GameOfLifeTests
                 Cell.Dead(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -98,7 +100,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
         #endregion
         #endregion
@@ -116,7 +118,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
 
         [Fact]
@@ -131,7 +133,7 @@ namespace GameOfLifeTests
                 Cell.Dead(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Alive());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Alive());
         }
         #endregion
 
@@ -153,7 +155,7 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
 
         [Fact]
@@ -168,9 +170,9 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
         }
-      
+
         [Fact]
         public void Dead_cell_with_2_neighbors_still_dead()
         {
@@ -181,61 +183,75 @@ namespace GameOfLifeTests
                 Cell.Alive(),
             };
             var cell = deadCell.NextGeneration(neighbors);
-            Check.That(cell).IsEqualTo(Cell.Dead());
+           NFluent.Check.That(cell).IsEqualTo(Cell.Dead());
+        }
+        #endregion
+
+        // Failed test
+        //[Property]
+        //public Property CellShouldDieBySolitude(List<Cell> neighbors)
+        //{
+        //    return Prop.When(Global.AnyInput,
+        //        () => Cell.Alive()
+        //        .NextGeneration(neighbors)
+        //        .IsDead());
+        //}
+
         [Property(Arbitrary = new[] { typeof(DeadCellGenerator) })]
+        public Property DeadCells(List<Cell> neighbors)
         {
-            return Prop.When(true,
-                () => !Cell.Dead()
+            return Prop.When(Global.AnyInput,
+                () => Cell.Dead()
                 .NextGeneration(neighbors)
-                .IsAlive());
+                .IsDead());
         }
-
-        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
-        public Property WithinStabilityThreshold_withAliveCell(List<Cell> neighbors)
-        {
-            return Prop.When(true,
-                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
-        }
-
-        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
-        public Property WithinStabilityThreshold_withDeadCell(List<Cell> neighbors)
-        {
-            return Prop.When(true,
-                () => !Cell.Dead().NextGeneration(neighbors).IsAlive());
-        }
-
-        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
-        public Property IsFertilityThreshold_withAliveCell(List<Cell> neighbors)
-        {
-            return Prop.When(true,
-                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
-        }
-
-        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
-        public Property IsFertilityThreshold_withDeadCell(List<Cell> neighbors)
-        {
-            return Prop.When(true,
-                () => Cell.Dead().NextGeneration(neighbors).IsAlive());
-        }
-
+     
         [Property(Arbitrary = new[] { typeof(OverpopulationGenerator) })]
         public Property Overpopulation(IEnumerable<Cell> neighbors)
         {
-            return Prop.When(true,
-                () => !Cell.Alive()
+            return Prop.When(Global.AnyInput,
+                () => Cell.Alive()
                 .NextGeneration(neighbors)
-                .IsAlive());
+                .IsDead());
         }
 
         [Property(Arbitrary = new[] { typeof(OverpopulationGenerator2) })]
         public Property Overpopulation2(IEnumerable<Cell> neighbors)
         {
             return Prop.When(neighbors.Count() > 3,
-                () => !Cell.Alive()
+                () => Cell.Alive()
                 .NextGeneration(neighbors)
-                .IsAlive());
+                .IsDead());
         }
-    }
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withAliveCell(List<Cell> neighbors)
+        {
+            return Prop.When(Global.AnyInput,
+                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyTwoAliveNeighborsGenerator) })]
+        public Property WithinStabilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(Global.AnyInput,
+                () => Cell.Dead().NextGeneration(neighbors).IsDead());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
+        public Property IsFertilityThreshold_withAliveCell(List<Cell> neighbors)
+        {
+            return Prop.When(Global.AnyInput,
+                () => Cell.Alive().NextGeneration(neighbors).IsAlive());
+        }
+
+        [Property(Arbitrary = new[] { typeof(OnlyThreeAliveNeighborsGenerator) })]
+        public Property IsFertilityThreshold_withDeadCell(List<Cell> neighbors)
+        {
+            return Prop.When(Global.AnyInput,
+                () => Cell.Dead().NextGeneration(neighbors).IsAlive());
+        }
+  }
 
     public static class OverpopulationGenerator2
     {
