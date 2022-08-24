@@ -198,7 +198,7 @@ namespace GameOfLifeTests
         //}
 
         [Property(Arbitrary = new[] { typeof(DeadCellGenerator) })]
-        public Property DeadCells(List<Cell> neighbors)
+        public Property DeadCells(IEnumerable<Cell> neighbors)
         {
             return Prop.When(Global.AnyInput,
                 () => Cell.Dead()
@@ -326,9 +326,16 @@ namespace GameOfLifeTests
 
     public static class DeadCellGenerator
     {
-        public static Arbitrary<List<Cell>> Generate()
+        public static Arbitrary<IEnumerable<Cell>> Generate()
         {
-            return Arb.Default.List<Cell>().Filter(l => l.All(c => !c.IsAlive()));
+            var numberCells = Arb.Default.Int32()
+                .Convert(
+                x=> Math.Abs(x),
+                y=> y);
+            var arbCell = numberCells.Convert(
+                x => Enumerable.Range(0, x).Select(x => Cell.Dead()),
+                c => c.Count());
+            return arbCell;
         }
     }
 }
