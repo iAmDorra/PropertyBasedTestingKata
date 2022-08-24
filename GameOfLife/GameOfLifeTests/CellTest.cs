@@ -18,7 +18,7 @@ namespace GameOfLifeTests
             NFluent.Check.That(aliveCell.IsAlive()).IsTrue();
         }
 
-        #region For a space that is populated
+        #region For alive cell
         #region Each cell with one or no neighbors dies, as if by solitude
         [Fact]
         public void Alive_cell_with_no_neighbor_dies()
@@ -103,7 +103,7 @@ namespace GameOfLifeTests
         #endregion
         #endregion
 
-        #region For a space that is empty or unpopulated
+        #region For dead cell
         #region Each cell with three neighbors becomes populated
         [Fact]
         public void Dead_cell_with_3_neighbor_survives()
